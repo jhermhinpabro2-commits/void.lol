@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>void.lol</title>
+<link rel="manifest" href="/manifest.json"><link rel="icon" href="/icon.svg"><meta name="theme-color" content="#0b0b0d">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#0b0b0d;--card:#141417;--c2:#1b1b20;--pr:#e11d2e;--prd:#3b0a10;--on:#22c55e;--off:#5c1219}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f2f2f5;font-family:system-ui,sans-serif;padding-top:env(safe-area-inset-top,0)}
+button,input,select{font:inherit;color:inherit}
+.logo{display:flex;align-items:center;gap:8px;font-size:24px;font-weight:600}.logo b{color:var(--pr)}
+#login{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px}
+.btn{border:1px solid #2c2c34;background:var(--c2);padding:14px 18px;border-radius:14px;width:100%;max-width:340px;cursor:pointer}
+.dc{background:#5865f2;border-color:#5865f2}.gg{background:#fff;color:#111}.pr{background:var(--prd);border-color:var(--pr)}
+#app{display:none}header{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #222}
+.wrap{max-width:640px;margin:auto;padding:12px 16px 120px}h2{font-size:19px;margin:24px 0 10px;color:#c9c9d2}
+.box{background:var(--card);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:14px}
+label{font-size:14px;color:#cfcfd8;display:block;margin-bottom:6px}
+input[type=text],input[type=url],select{width:100%;background:#0d0d10;border:1px solid #23232a;border-radius:12px;padding:12px}
+input[type=color]{width:100%;height:42px;border:0;background:#0d0d10;border-radius:12px}input[type=range]{width:100%}
+.drop{border:1px dashed #333;border-radius:14px;padding:16px;text-align:center;color:#8b8b96;cursor:pointer}.drop img,.drop video{max-width:100%;max-height:130px;border-radius:10px}
+.row{display:flex;justify-content:space-between;align-items:center}.lk{display:flex;gap:8px}.lk select{width:120px;flex:none}
+.tg{appearance:none;width:50px;height:28px;border-radius:20px;background:var(--off);position:relative;cursor:pointer}.tg:checked{background:var(--on)}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.15s}.tg:checked::after{left:25px}
+.bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0));max-width:616px;margin:auto;background:#101013;border:1px solid #2a2a30;border-radius:22px;padding:10px 12px;display:flex;align-items:center;justify-content:space-between}
+.bar button{border-radius:16px;padding:12px 18px;border:1px solid var(--pr);background:var(--prd);cursor:pointer}
+.share{background:var(--c2);padding:12px;border-radius:12px;word-break:break-all;font-size:14px}
+#prof{display:none;position:fixed;inset:0;overflow:hidden;background:#000;align-items:center;justify-content:center;text-align:center}
+#pbgw,#pbgw>*{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}#pcv{position:absolute;inset:0;pointer-events:none}
+#pbox{position:relative;display:flex;flex-direction:column;align-items:center;gap:10px;padding:24px;border-radius:26px;max-width:92%}
+#pav{width:96px;height:96px;border-radius:50%;object-fit:cover}#pname{font-size:34px;margin:0}.anim{animation:gl 2s infinite alternate}@keyframes gl{to{letter-spacing:3px}}
+#picons{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}#picons a{width:46px;height:46px;border-radius:50%;background:#ffffff1f;display:flex;align-items:center;justify-content:center;text-decoration:none;font-weight:700}
+#pviews{position:absolute;left:18px;bottom:96px;text-shadow:0 0 6px #000}
+#pplay{position:absolute;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0));background:#ffffff22;backdrop-filter:blur(8px);border-radius:16px;padding:10px 14px;display:none;align-items:center;gap:12px}
+#pplay button{background:none;border:0;font-size:22px;cursor:pointer}
+#pclaim{position:absolute;top:calc(12px + env(safe-area-inset-top,0));left:12px;background:#0008;border:0;color:#fff;border-radius:20px;padding:9px 14px;cursor:pointer}
+</style></head><body>
+<section id="login"><div class="logo"><span>void<b>.</b>lol</span></div><small>Create your own bio page</small>
+<button class="btn dc" onclick="oauth('discord')">Continue with Discord</button>
+<button class="btn gg" onclick="oauth('google')">Continue with Gmail</button></section>
+
+<section id="app">
+<header><div class="logo"><span>void<b>.</b>lol</span></div><div style="display:flex;gap:8px"><button class="btn pr" style="width:auto;padding:10px 14px" onclick="open(profileUrl())">My Page</button><button class="btn" style="width:auto;padding:10px 14px" onclick="sb.auth.signOut()">Logout</button></div></header>
+<div class="wrap">
+<h2>Assets Uploader</h2><div class="box">
+<div><label>Background (image / mp4)</label><div class="drop" id="dbg" onclick="pick('bg','image/*,video/*')">Tap to upload</div></div>
+<div><label>Audio</label><div class="drop" id="dau" onclick="pick('audio','audio/*')">Tap to upload</div></div>
+<div><label>Profile Avatar</label><div class="drop" id="dav" onclick="pick('avatar','image/*')">Tap to upload</div></div></div>
+<h2>General Customization</h2><div class="box">
+<div><label>Username</label><input type="text" id="username" maxlength="20"></div>
+<div><label>Description</label><input type="text" id="description" maxlength="60"></div>
+<div><label>Background Effects</label><select id="effect"><option value="none">None</option><option value="snow">Snowflakes</option><option value="stars">Stars</option></select></div>
+<div><label>Profile Opacity</label><input type="range" id="opacity" min="0" max="100"></div>
+<div><label>Profile Blur</label><input type="range" id="blur" min="0" max="80"></div></div>
+<h2>Links</h2><div class="box" id="links"></div>
+<h2>Colors</h2><div class="box"><div><label>Accent</label><input type="color" id="accent"></div><div><label>Text</label><input type="color" id="text_color"></div></div>
+<h2>Other</h2><div class="box">
+<div class="row"><label>Animated Title</label><input type="checkbox" class="tg" id="anim"></div>
+<div class="row"><label>Glow</label><input type="checkbox" class="tg" id="glow"></div></div>
+<h2>Share Your Profile</h2><div class="box"><div class="share" id="share"></div><button class="btn pr" style="max-width:none" onclick="navigator.clipboard.writeText(profileUrl())">Copy link</button></div>
+</div>
+<div class="bar"><b id="dirty">No changes</b><button onclick="save()">Save Changes</button></div></section>
+
+<section id="prof"><div id="pbgw"></div><canvas id="pcv"></canvas>
+<a id="pclaim" href="/">void.lol/you · Claim your free profile!</a>
+<div id="pbox"><img id="pav" alt=""><h1 id="pname"></h1><p id="pdesc"></p><div id="picons"></div></div>
+<div id="pviews"></div>
+<div id="pplay"><span>♫</span><div style="flex:1"><div id="ptitle"></div><input type="range" id="pvol" min="0" max="100" value="60" style="width:100%"></div><button id="ppp">⏸</button></div></section>
+
+<script>
+/* === PALITAN ITO ng sarili mong Supabase keys (Settings > API) === */
+const SB_URL="https://YOUR-PROJECT-REF.supabase.co";
+const SB_KEY="YOUR-ANON-PUBLIC-KEY";
+const sb=supabase.createClient(SB_URL,SB_KEY);
+const $=id=>document.getElementById(id);
+const TYPES=["","Discord","TikTok","Instagram","YouTube","Twitter","Spotify","Twitch","GitHub","Facebook"];
+let P=null,dirty=false,raf,aud;
+const profileUrl=()=>location.origin+"/"+(P?.username||"");
+const oauth=p=>sb.auth.signInWithOAuth({provider:p,options:{redirectTo:location.origin}});
+const setDirty=v=>{dirty=v;$("dirty").textContent=v?"Unsaved changes!":"No changes"};
+
+async function boot(){
+  const path=decodeURIComponent(location.pathname.slice(1));
+  if(path) return showPublic(path);
+  sb.auth.onAuthStateChange((_e,s)=>s?enter(s.user):leave());
+  const {data:{session}}=await sb.auth.getSession();
+  session?enter(session.user):leave();
+}
+function leave(){$("app").style.display="none";$("login").style.display="flex"}
+async function enter(u){
+  let {data}=await sb.from("profiles").select("*").eq("id",u.id).maybeSingle();
+  if(!data){
+    const base=((u.user_metadata?.full_name||u.email||"user").split("@")[0]).toLowerCase().replace(/[^a-z0-9._]/g,"").slice(0,14).padEnd(3,"x");
+    for(let i=0;i<5&&!data;i++){
+      const name=i?base+Math.floor(Math.random()*9999):base;
+      const r=await sb.from("profiles").insert({id:u.id,username:name}).select().single();
+      if(r.data)data=r.data;
+    }
+  }
+  P=data;$("login").style.display="none";$("app").style.display="block";fill();
+}
+function fill(){
+  ["username","description","effect","opacity","blur","accent","text_color"].forEach(k=>$(k).value=P[k]);
+  ["anim","glow"].forEach(k=>$(k).checked=P[k]);
+  ["username","description","effect","opacity","blur","accent","text_color"].forEach(k=>$(k).oninput=e=>{P[k]=["opacity","blur"].includes(k)?+e.target.value:e.target.value;$("share").textContent=profileUrl();setDirty(true)});
+  ["anim","glow"].forEach(k=>$(k).onchange=e=>{P[k]=e.target.checked;setDirty(true)});
+  while((P.links||[]).length<3)P.links.push({t:"",u:""});
+  $("links").innerHTML="";
+  P.links.forEach((l,i)=>{const d=document.createElement("div");d.className="lk";
+    d.innerHTML="<select>"+TYPES.map(t=>`<option ${t===l.t?"selected":""}>${t}</option>`).join("")+"</select><input type=url placeholder=https://... value=\""+(l.u||"")+"\">";
+    d.children[0].onchange=e=>{P.links[i].t=e.target.value;setDirty(true)};d.children[1].oninput=e=>{P.links[i].u=e.target.value;setDirty(true)};$("links").appendChild(d)});
+  drops();$("share").textContent=profileUrl();setDirty(false);
+}
+function drops(){
+  const s=(id,url,type)=>{const el=$(id);el.innerHTML="";if(!url){el.textContent="Tap to upload";return}
+    if(id==="dau"){el.textContent="♫ "+(P.audio_name||"audio");return}
+    const t=(type||"").startsWith("video")?"video":"img";const m=document.createElement(t);m.src=url;if(t==="video"){m.muted=m.autoplay=m.loop=m.playsInline=true}el.appendChild(m)};
+  s("dbg",P.bg_url,P.bg_type);s("dau",P.audio_url);s("dav",P.avatar_url);
+}
+function pick(k,acc){
+  const i=document.createElement("input");i.type="file";i.accept=acc;
+  i.onchange=async()=>{const f=i.files[0];if(!f)return;
+    if(f.size>45*1024*1024)return alert("Max file size is 45MB (free plan).");
+    const path=`${P.id}/${k}-${Date.now()}-${f.name.replace(/[^\w.]/g,"_")}`;
+    const {error}=await sb.storage.from("assets").upload(path,f,{upsert:true});
+    if(error)return alert(error.message);
+    const url=sb.storage.from("assets").getPublicUrl(path).data.publicUrl;
+    if(k==="bg"){P.bg_url=url;P.bg_type=f.type}if(k==="audio"){P.audio_url=url;P.audio_name=f.name}if(k==="avatar")P.avatar_url=url;
+    drops();setDirty(true)};
+  i.click();
+}
+async function save(){
+  P.username=P.username.toLowerCase().trim();
+  const {views,created_at,...row}=P;
+  const {error}=await sb.from("profiles").update(row).eq("id",P.id);
+  if(error)return alert(error.code==="23505"?"That username is already taken.":error.code==="23514"?"Username must be 3-20 characters: a-z, 0-9, . and _ only.":error.message);
+  setDirty(false);$("share").textContent=profileUrl();
+}
+async function showPublic(name){
+  $("login").style.display="none";
+  const {data}=await sb.from("profiles").select("*").eq("username",name.toLowerCase()).maybeSingle();
+  if(!data){document.body.innerHTML="<p style='text-align:center;margin-top:30vh'>No profile named <b>"+name.replace(/</g,"")+"</b>.<br><a href='/' style='color:#9b59d0'>Claim it now</a></p>";return}
+  sb.rpc("increment_views",{uname:data.username});
+  render(data);
+}
+function render(p){
+  const pf=$("prof");pf.style.display="flex";$("pbgw").innerHTML="";
+  if(p.bg_url){const t=(p.bg_type||"").startsWith("video")?"video":"img";const e=document.createElement(t);e.src=p.bg_url;if(t==="video"){e.muted=e.autoplay=e.loop=e.playsInline=true}$("pbgw").appendChild(e)}
+  else pf.style.background="radial-gradient(circle at 50% 30%,#3a0a0f,#000)";
+  const b=$("pbox");b.style.background=`rgba(0,0,0,${p.opacity/100})`;b.style.backdropFilter=`blur(${p.blur/4}px)`;b.style.color=p.text_color;
+  const n=$("pname");n.textContent=p.username;n.className=p.anim?"anim":"";n.style.textShadow=p.glow?`0 0 14px ${p.accent}`:"none";
+  $("pdesc").textContent=p.description;$("pav").style.display=p.avatar_url?"block":"none";if(p.avatar_url)$("pav").src=p.avatar_url;
+  $("picons").innerHTML="";(p.links||[]).forEach(l=>{if(!l.t||!l.u)return;const a=document.createElement("a");a.textContent=l.t.slice(0,2);a.title=l.t;
+    a.href=/^https?:\/\//i.test(l.u)?l.u:"https://"+l.u;a.target="_blank";a.rel="noopener";a.style.color=p.accent;$("picons").appendChild(a)});
+  $("pviews").textContent="👁 "+(p.views+1);
+  if(p.audio_url){$("pplay").style.display="flex";$("ptitle").textContent=p.audio_name||"audio";
+    const play=()=>{if(aud)return;aud=new Audio(p.audio_url);aud.loop=true;aud.volume=.6;aud.play();document.removeEventListener("click",play)};document.addEventListener("click",play);
+    $("ppp").onclick=e=>{e.stopPropagation();if(!aud)return play();aud.paused?(aud.play(),$("ppp").textContent="⏸"):(aud.pause(),$("ppp").textContent="▶")};
+    $("pvol").oninput=e=>{if(aud)aud.volume=e.target.value/100}}
+  fx(p.effect);
+}
+function fx(type){
+  const c=$("pcv"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;if(type==="none")return;
+  const ps=Array.from({length:50},()=>({x:Math.random()*c.width,y:Math.random()*c.height,s:6+Math.random()*10,v:.4+Math.random()*1.2}));
+  (function f(){x.clearRect(0,0,c.width,c.height);x.fillStyle="#fff";
+    ps.forEach(p=>{p.y+=p.v;if(p.y>c.height)p.y=-10;
+      if(type==="snow"){x.font=p.s+"px sans-serif";x.fillText("❄",p.x+Math.sin(p.y/30)*6,p.y)}else{x.globalAlpha=.4+.6*Math.abs(Math.sin(p.y/40));x.fillRect(p.x,p.y,2,2);x.globalAlpha=1}});
+    raf=requestAnimationFrame(f)})();
+}
+if("serviceWorker" in navigator)navigator.serviceWorker.register("/sw.js");
+boot();
+</script></body></html>
